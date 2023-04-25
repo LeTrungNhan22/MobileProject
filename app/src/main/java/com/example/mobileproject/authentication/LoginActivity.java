@@ -1,4 +1,4 @@
-package com.example.mobileproject;
+package com.example.mobileproject.authentication;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +15,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mobileproject.MainActivity;
+import com.example.mobileproject.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,7 +45,6 @@ public class LoginActivity extends AppCompatActivity {
         login = findViewById(R.id.login);
         txt_signup = findViewById(R.id.txt_signup);
         loginWithGoogleBtn = findViewById(R.id.loginWithGoogleBtn);
-
         show_password_icon = findViewById(R.id.show_password_icon);
 
         show_password_icon.setOnClickListener(new View.OnClickListener() {

@@ -1,9 +1,7 @@
-package com.example.mobileproject;
+package com.example.mobileproject.authentication;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -17,14 +15,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.TaskExecutors;
-import com.google.firebase.FirebaseException;
+import com.example.mobileproject.R;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthOptions;
-import com.google.firebase.auth.PhoneAuthProvider;
-
-import java.util.concurrent.TimeUnit;
 
 public class OTPVerification extends AppCompatActivity {
     private EditText edt_otp1, edt_otp2, edt_otp3, edt_otp4, edt_otp5, edt_otp6;
@@ -109,7 +101,6 @@ public class OTPVerification extends AppCompatActivity {
         });
 
     }
-
 
     private void showKeyboard(EditText edt_otp) {
         edt_otp.requestFocus();

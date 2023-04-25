@@ -1,4 +1,4 @@
-package com.example.mobileproject;
+package com.example.mobileproject.authentication;
 
 import static android.content.ContentValues.TAG;
 
@@ -18,11 +18,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mobileproject.MainActivity;
+import com.example.mobileproject.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
+import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
@@ -105,52 +110,15 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                 } else if (str_password.length() < 6) {
                     Toast.makeText(RegisterActivity.this, "Mật khẩu phải có ít nhất 6 ký tự", Toast.LENGTH_SHORT).show();
-
                 } else {
                     pd = new ProgressDialog(RegisterActivity.this);
                     pd.setMessage("Vui lòng chờ...");
                     pd.show();
-//                    register(str_username, str_fullName, str_email, str_password, str_phone_number);
-
-                    PhoneAuthOptions options =
-                            PhoneAuthOptions.newBuilder(auth)
-                                    .setPhoneNumber(String.valueOf(Integer.parseInt(str_phone_number)))       // Phone number to verify
-                                    .setTimeout(90L, TimeUnit.SECONDS) // Timeout and unit
-                                    .setActivity(RegisterActivity.this)                 // Activity (for callback binding)
-                                    .setCallbacks(new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                                        @Override
-                                        public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-
-                                        }
-
-                                        @Override
-                                        public void onVerificationFailed(@NonNull FirebaseException e) {
-
-                                        }
-
-                                        @Override
-                                        public void onCodeSent(@NonNull String verificationId,
-                                                               @NonNull PhoneAuthProvider.ForceResendingToken token) {
-
-                                            Log.d(TAG, "onCodeSent:" + verificationId);
+                    FirebaseAuth auth = FirebaseAuth.getInstance();
+                    auth.setLanguageCode("vi");
+                    register(str_username, str_fullName, str_email, str_password, str_phone_number);
 
 
-                                        }
-
-                                    })          // OnVerificationStateChangedCallbacks
-                                    .build();
-                    PhoneAuthProvider.verifyPhoneNumber(options);
-
-
-//                   chuyển sang trang OTP
-                    Intent intent = new Intent(RegisterActivity.this, OTPVerification.class);
-                    intent.putExtra("username", str_username);
-                    intent.putExtra("fullName", str_fullName);
-                    intent.putExtra("email", str_email);
-                    intent.putExtra("phone_number", str_phone_number);
-                    intent.putExtra("password", str_password);
-
-                    startActivity(intent);
                 }
             }
         });
@@ -177,6 +145,8 @@ public class RegisterActivity extends AppCompatActivity {
                     hashMap.put("phone_number", phone_number);
                     hashMap.put("bio", "");
                     hashMap.put("imageURL", "https://firebasestorage.googleapis.com/v0/b/mobileproject-30a59.appspot.com/o/common%2FAvatar.png?alt=media&token=b2cc192a-ea6a-4f7d-8916-a10ab61352c3");
+                    hashMap.put("status", "active");
+
 
                     reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
