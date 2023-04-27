@@ -117,8 +117,6 @@ public class RegisterActivity extends AppCompatActivity {
                     FirebaseAuth auth = FirebaseAuth.getInstance();
                     auth.setLanguageCode("vi");
                     register(str_username, str_fullName, str_email, str_password, str_phone_number);
-
-
                 }
             }
         });
@@ -146,8 +144,6 @@ public class RegisterActivity extends AppCompatActivity {
                     hashMap.put("bio", "");
                     hashMap.put("imageURL", "https://firebasestorage.googleapis.com/v0/b/mobileproject-30a59.appspot.com/o/common%2FAvatar.png?alt=media&token=b2cc192a-ea6a-4f7d-8916-a10ab61352c3");
                     hashMap.put("status", "active");
-
-
                     reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -163,7 +159,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 } else {
                     pd.dismiss();
-                    Toast.makeText(RegisterActivity.this, "Bạn không thể đăng ký với email này", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Có lỗi xảy ra vui lòng thử lại ~", Toast.LENGTH_SHORT).show();
                 }
 
 
