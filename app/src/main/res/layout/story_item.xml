@@ -6,34 +6,43 @@
     android:layout_marginStart="10dp"
     android:orientation="vertical">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/story_photo"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:src="@drawable/placeholder"
-        app:civ_border_color="#f23b5a"
-        app:civ_border_width="2dp" />
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/story_photo_seen"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:src="@drawable/placeholder"
-        android:visibility="gone"
-        app:civ_border_color="#f23b5a"
-        app:civ_border_width="2dp" />
-
-    <TextView
-        android:id="@+id/story_username"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:maxLines="1"
-        android:text="username"
-        android:textColor="@color/colorPrimaryDark">
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical">
 
-    </TextView>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/story_photo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:src="@drawable/placeholder"
+            app:civ_border_color="#f23b5a"
+            app:civ_border_width="2dp" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/story_photo_seen"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:src="@drawable/placeholder"
+            android:visibility="gone"
+            app:civ_border_color="#f23b5a"
+            app:civ_border_width="2dp" />
+
+        <TextView
+            android:id="@+id/story_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:maxLines="1"
+            android:textSize="12sp"
+            android:text="username"
+            android:textColor="@color/colorPrimaryDark">
+
+        </TextView>
+    </LinearLayout>
 
 </LinearLayout>

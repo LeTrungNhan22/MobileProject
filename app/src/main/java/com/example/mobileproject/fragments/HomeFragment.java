@@ -16,7 +16,9 @@ import android.widget.ProgressBar;
 
 import com.example.mobileproject.R;
 import com.example.mobileproject.adapters.PostAdapter;
+import com.example.mobileproject.adapters.StoryAdapter;
 import com.example.mobileproject.models.Post;
+import com.example.mobileproject.models.Story;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,7 +33,7 @@ import java.util.Objects;
 
 public class HomeFragment extends Fragment {
 
-    private RecyclerView recyclerView;
+
     private PostAdapter postAdapter;
     private List<Post> postList;
 
@@ -39,25 +41,38 @@ public class HomeFragment extends Fragment {
 
     ProgressBar progressBar;
 
+    private StoryAdapter storyAdapter;
+    private List<Story> storyList;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        recyclerView = view.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        linearLayoutManager.setSmoothScrollbarEnabled(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
         postList = new ArrayList<>();
-
         postAdapter = new PostAdapter(getContext(), postList);
         recyclerView.setAdapter(postAdapter);
+
+        RecyclerView recyclerViewStory = view.findViewById(R.id.recycler_view_stories);
+        recyclerViewStory.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getContext(),
+                LinearLayoutManager.HORIZONTAL, false);
+        recyclerViewStory.setLayoutManager(linearLayoutManager1);
+
+        storyList = new ArrayList<>();
+        storyAdapter = new StoryAdapter(getContext(), storyList);
+        recyclerViewStory.setAdapter(storyAdapter);
+
 
         progressBar = view.findViewById(R.id.progress_circular);
 
@@ -82,6 +97,7 @@ public class HomeFragment extends Fragment {
                     followingList.add(dataSnapshot.getKey());
                 }
                 readPosts();
+                readStory();
 
             }
 
@@ -120,5 +136,39 @@ public class HomeFragment extends Fragment {
             }
         });
 
+    }
+
+    private void readStory() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                long timeCurrent = System.currentTimeMillis();
+                storyList.clear();
+                storyList.add(new Story("", 0, 0, "",
+                        Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()));
+                for (String id : followingList) {
+                    int countStory = 0;
+                    Story story = null;
+                    for (DataSnapshot dataSnapshot : snapshot.child(id).getChildren()) {
+                        story = dataSnapshot.getValue(Story.class);
+                        assert story != null;
+                        if (timeCurrent > story.getTimeStart() && timeCurrent < story.getTimeEnd()) {
+                            countStory++;
+                        }
+                    }
+                    if (countStory > 0) {
+                        assert story != null;
+                        storyList.add(story);
+                    }
+                }
+                storyAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }

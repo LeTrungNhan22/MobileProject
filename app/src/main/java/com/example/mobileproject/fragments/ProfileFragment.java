@@ -345,17 +345,16 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void mySaves(){
+    private void mySaves() {
         mySaves = new ArrayList<>();
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Saves")
-                .child(firebaseUser.getUid());
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Saves").child(firebaseUser.getUid());
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     mySaves.add(dataSnapshot.getKey());
                 }
 
@@ -371,7 +370,8 @@ public class ProfileFragment extends Fragment {
 
 
     }
-    private void readSaves(){
+
+    private void readSaves() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
 
         reference.addValueEventListener(new ValueEventListener() {
@@ -380,12 +380,12 @@ public class ProfileFragment extends Fragment {
 
                 postList_saves.clear();
 
-                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Post post = dataSnapshot.getValue(Post.class);
 
-                    for(String id : mySaves){
+                    for (String id : mySaves) {
                         assert post != null;
-                        if(post.getPostId().equals(id)){
+                        if (post.getPostId().equals(id)) {
                             postList_saves.add(post);
                         }
                     }
