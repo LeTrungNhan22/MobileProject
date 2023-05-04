@@ -1,6 +1,7 @@
 package com.example.mobileproject.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -19,6 +20,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.mobileproject.EditProfileActivity;
+import com.example.mobileproject.FollowersActivity;
+import com.example.mobileproject.OptionsActivity;
 import com.example.mobileproject.R;
 import com.example.mobileproject.adapters.MyPhotosAdapter;
 import com.example.mobileproject.models.Post;
@@ -125,7 +129,8 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 String button = edit_profile.getText().toString();
 
-                if (button.equals("Edit Profile")) {
+                if (button.equals("Edit Profile") || button.equals("Chỉnh sửa")) {
+                    startActivity(new Intent(getContext(), EditProfileActivity.class));
 
                 } else if (button.equals("follow")) {
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid())
@@ -141,6 +146,14 @@ public class ProfileFragment extends Fragment {
                             .child("followers").child(firebaseUser.getUid()).removeValue();
 
                 }
+
+            }
+        });
+
+        options.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), OptionsActivity.class));
 
             }
         });
@@ -161,6 +174,27 @@ public class ProfileFragment extends Fragment {
                 recyclerView.setVisibility(View.GONE);
                 recyclerView_saves.setVisibility(View.VISIBLE);
 
+            }
+        });
+
+
+        followers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), FollowersActivity.class);
+                intent.putExtra("id", profileId);
+                intent.putExtra("title", "Người theo dõi");
+                startActivity(intent);
+            }
+        });
+
+        following.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), FollowersActivity.class);
+                intent.putExtra("id", profileId);
+                intent.putExtra("title", "Đang theo dõi");
+                startActivity(intent);
             }
         });
 

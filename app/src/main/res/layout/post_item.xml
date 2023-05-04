@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,10 +34,19 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/post_image"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/post_image"
+                android:layout_width="match_parent"
+                app:layout_constraintDimensionRatio="1:1"
+                android:layout_height="0dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -103,15 +113,15 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="5dp"
-
+            android:text="Chưa có bình luận nào "
             android:textColor="@color/colorAccent"
             android:textStyle="bold" />
 
-        <TextView
+
+        <View
             android:layout_width="match_parent"
-            android:layout_height="1sp"
-            android:background="@color/colorAccent"
-            android:lineBreakStyle="normal" />
+            android:layout_height="1dp"
+            android:background="@color/colorAccent" />
 
     </LinearLayout>
 
