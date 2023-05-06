@@ -132,7 +132,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
                 reference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(StoryActivity.this, "Đã xóa !", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(StoryActivity.this, "Đã xóa tin của bạn!", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 });
@@ -143,7 +143,6 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
     @Override
     public void onNext() {
         Glide.with(getApplicationContext()).load(images.get(++counter)).into(image);
-
         addView(storyIds.get(counter));
         seenNumber(storyIds.get(counter));
 

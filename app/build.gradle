@@ -50,6 +50,7 @@ dependencies {
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
     implementation 'com.github.shts:storiesProgressView:3.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
 
 
     runtimeOnly 'androidx.exifinterface:exifinterface:1.3.6'

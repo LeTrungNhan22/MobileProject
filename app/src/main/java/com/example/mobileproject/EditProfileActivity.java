@@ -108,8 +108,6 @@ public class EditProfileActivity extends AppCompatActivity {
         hashMap.put("fullName", fullName);
         hashMap.put("username", username);
         hashMap.put("bio", bio);
-
-
         reference.updateChildren(hashMap);
         Toast.makeText(EditProfileActivity.this, "Cập nhật hồ sơ thành công", Toast.LENGTH_SHORT).show();
     }
@@ -183,7 +181,6 @@ public class EditProfileActivity extends AppCompatActivity {
                 && resultCode == RESULT_OK) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             imageUri = result.getUri();
-
             uploadImage();
         } else {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();

@@ -131,6 +131,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
 
+
                 Glide.with(mContext).load(user.getImageURL()).into(viewHolder.story_photo);
 
                 if (pos != 0) {
