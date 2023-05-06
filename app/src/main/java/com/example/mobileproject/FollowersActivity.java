@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 import com.example.mobileproject.adapters.UserAdapter;
 import com.example.mobileproject.models.User;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -202,4 +203,6 @@ public class FollowersActivity extends AppCompatActivity {
         });
 
     }
+
+
 }

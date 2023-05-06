@@ -1,14 +1,21 @@
 package com.example.mobileproject.adapters;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -18,11 +25,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.mobileproject.CommentsActivity;
 import com.example.mobileproject.FollowersActivity;
+import com.example.mobileproject.MainActivity;
 import com.example.mobileproject.R;
 import com.example.mobileproject.fragments.PostDetailFragment;
 import com.example.mobileproject.fragments.ProfileFragment;
 import com.example.mobileproject.models.Post;
 import com.example.mobileproject.models.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +41,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
@@ -60,22 +71,30 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         Post post = mPost.get(position);
 
-        Glide.with(mContext).load(post.getPostImage())
-                .apply(new RequestOptions().placeholder(R.drawable.placeholder))
-                .into(holder.post_image);
 
-        if (post.getDescription().equals("")) {
-            holder.description.setVisibility(View.GONE);
-        } else {
-            holder.description.setVisibility(View.VISIBLE);
-            holder.description.setText(post.getDescription());
+        if (post != null) {
+            if (post.getPostImage() != null) {
+                Glide.with(mContext).load(post.getPostImage())
+                        .apply(new RequestOptions().placeholder(R.drawable.placeholder))
+                        .into(holder.post_image);
+            }
+            if (post.getDescription().equals("")) {
+                holder.description.setVisibility(View.GONE);
+            } else {
+                holder.description.setVisibility(View.VISIBLE);
+                holder.description.setText(post.getDescription());
+            }
+
         }
 
-        publisherInfo(holder.image_profile, holder.username, holder.publisher, post.getPublisher());
-        isLiked(post.getPostId(), holder.like);
-        nrLikes(holder.likes, post.getPostId());
-        getComments(post.getPostId(), holder.comments);
-        isSaved(post.getPostId(), holder.save);
+        if (post != null) {
+            publisherInfo(holder.image_profile, holder.username, holder.publisher, post.getPublisher());
+            isLiked(post.getPostId(), holder.like);
+            nrLikes(holder.likes, post.getPostId());
+            getComments(post.getPostId(), holder.comments);
+            isSaved(post.getPostId(), holder.save);
+        }
+
 
         holder.image_profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +143,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         .replace(R.id.fragment_container, new ProfileFragment()).commit();
             }
         });
-
 
 
         holder.save.setOnClickListener(new View.OnClickListener() {
@@ -181,6 +199,48 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
 
+        holder.more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(mContext, view);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.edit:
+                                editPost(post.getPostId());
+                                return true;
+                            case R.id.delete:
+                                FirebaseDatabase.getInstance().getReference("Posts")
+                                        .child(post.getPostId()).removeValue()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Toast.makeText(mContext, "Đã xóa bài!", Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(mContext, MainActivity.class);
+                                                    mContext.startActivity(intent); // restart activity
+                                                }
+                                            }
+                                        });
+                                return true;
+                            case R.id.report:
+                                Toast.makeText(mContext, "Report clicked!", Toast.LENGTH_SHORT).show();
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+                popupMenu.inflate(R.menu.post_menu);
+                if (!post.getPublisher().equals(firebaseUser.getUid())) {
+                    popupMenu.getMenu().findItem(R.id.edit).setVisible(false);
+                    popupMenu.getMenu().findItem(R.id.delete).setVisible(false);
+                }
+                popupMenu.show();
+            }
+        });
+
     }
 
     @Override
@@ -190,7 +250,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView image_profile, post_image, like, comment, save;
+        public ImageView image_profile, post_image, like, comment, save, more;
         public TextView username, likes, publisher, description, comments;
 
         public ViewHolder(@NonNull View itemView) {
@@ -206,6 +266,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             publisher = itemView.findViewById(R.id.publisher);
             description = itemView.findViewById(R.id.description);
             comments = itemView.findViewById(R.id.comments);
+            more = itemView.findViewById(R.id.more);
 
         }
     }
@@ -317,6 +378,66 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     imageView.setImageResource(R.drawable.ic_saved);
                     imageView.setTag("save");
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void editPost(final String postId) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
+        alertDialog.setTitle("Edit Post");
+
+        final EditText editText = new EditText(mContext);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+        );
+
+        editText.setLayoutParams(layoutParams);
+        alertDialog.setView(editText);
+
+        getText(postId, editText);
+
+        alertDialog.setPositiveButton("Chỉnh sửa",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("description", editText.getText().toString());
+
+                        FirebaseDatabase.getInstance().getReference("Posts")
+                                .child(postId).updateChildren(hashMap);
+                    }
+                });
+
+        alertDialog.setNegativeButton("Trở lại",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (dialogInterface != null) {
+                            dialogInterface.dismiss();
+                        }
+
+                    }
+                });
+
+        alertDialog.show();
+    }
+
+    private void getText(String postId, final EditText editText) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts")
+                .child(postId);
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Post post = snapshot.getValue(Post.class);
+                if (post != null) editText.setText(post.getDescription());
+
             }
 
             @Override

@@ -68,6 +68,10 @@ public class CommentsActivity extends AppCompatActivity {
             }
         });
 
+        Intent intent = getIntent();
+        postId = intent.getStringExtra("postId");
+        publisherId = intent.getStringExtra("publisherId");
+
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
 
@@ -75,7 +79,7 @@ public class CommentsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         commentList = new ArrayList<>();
-        commentAdapter = new CommentAdapter(this, commentList);
+        commentAdapter = new CommentAdapter(this, commentList, postId);
         recyclerView.setAdapter(commentAdapter);
 
         add_comment = findViewById(R.id.add_comment);
@@ -84,9 +88,6 @@ public class CommentsActivity extends AppCompatActivity {
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        Intent intent = getIntent();
-        postId = intent.getStringExtra("postId");
-        publisherId = intent.getStringExtra("publisherId");
 
         post.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +96,7 @@ public class CommentsActivity extends AppCompatActivity {
                     Toast.makeText(CommentsActivity.this, "Vui lòng nhập bình luận để gửi đi", Toast.LENGTH_SHORT).show();
                 } else {
                     addComment();
-                    // addNotifications();
+                    addNotifications();
 
                 }
             }
@@ -108,13 +109,17 @@ public class CommentsActivity extends AppCompatActivity {
     private void addComment() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comments").child(postId);
 
+        String commentId = reference.push().getKey();
+
         HashMap<String, Object> hashMap = new HashMap<>();
-
-
         hashMap.put("comment", add_comment.getText().toString());
         hashMap.put("publisher", firebaseUser.getUid());
+        hashMap.put("commentId", commentId);
 
-        reference.push().setValue(hashMap);
+
+        reference.child(commentId).setValue(hashMap);
+        addNotifications();
+
         add_comment.setText("");
     }
 
@@ -157,5 +162,17 @@ public class CommentsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void addNotifications() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(publisherId);
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("userId", firebaseUser.getUid());
+        hashMap.put("text", "đã bình luận: " + add_comment.getText().toString());
+        hashMap.put("postId", postId);
+        hashMap.put("isPost", true);
+
+        reference.push().setValue(hashMap);
     }
 }

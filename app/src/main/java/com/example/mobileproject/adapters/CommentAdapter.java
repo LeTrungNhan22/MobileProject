@@ -1,21 +1,30 @@
 package com.example.mobileproject.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.mobileproject.CommentsActivity;
+import com.example.mobileproject.MainActivity;
 import com.example.mobileproject.R;
+import com.example.mobileproject.fragments.ProfileFragment;
 import com.example.mobileproject.models.Comment;
 import com.example.mobileproject.models.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,12 +41,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     private List<Comment> mComment;
 
+    private String postId;
+
     private FirebaseUser firebaseUser;
 
-    public CommentAdapter(Context mContext, List<Comment> mComment) {
+    public CommentAdapter(Context mContext, List<Comment> mComment, String postId) {
         this.mContext = mContext;
         this.mComment = mComment;
+        this.postId = postId;
     }
+
 
     @NonNull
     @Override
@@ -56,15 +69,57 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
         getUserInfo(holder.image_profile, holder.username, comment.getPublisher());
 
-        holder.comment.setOnClickListener(new View.OnClickListener() {
+
+        holder.image_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, CommentsActivity.class);
+                Intent intent = new Intent(mContext, ProfileFragment.class);
                 intent.putExtra("publisherId", comment.getPublisher());
                 mContext.startActivity(intent);
-
             }
         });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                ColorDrawable cd = new ColorDrawable(ContextCompat.getColor(mContext, R.color.color_gray_light));
+                cd.setAlpha(191);
+                holder.itemView.setBackground(cd);
+                if (comment.getPublisher().equals(firebaseUser.getUid())) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+                    alertDialog.setTitle("Bạn có muốn xóa bình luận này?");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, " ", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Có",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    FirebaseDatabase.getInstance().getReference("Comments")
+                                            .child(postId).child(comment.getCommentId())
+                                            .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Toast.makeText(mContext, "Đã xóa bình luận", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+                                    // Thiết lập lại màu nền của item view sau khi xóa xong
+                                    cd.setAlpha(0); // 0% alpha
+                                    holder.itemView.setBackground(cd);
+                                    dialogInterface.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                return true;
+            }
+        });
+
 
     }
 
