@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ChatActivity">
+    android:background="#e6e6e6"
+    tools:context=".MessageActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -35,26 +36,44 @@
 
         </androidx.appcompat.widget.Toolbar>
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            app:tabIndicatorColor="#fff"
-            app:tabSelectedTextColor="#fff"
-            app:tabTextColor="#fff" />
-
 
     </com.google.android.material.appbar.AppBarLayout>
 
-
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/view_pager"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_below="@+id/bar_layout"
+        android:layout_above="@+id/bottom" />
 
-        />
+    <RelativeLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#fff"
+        android:padding="7dp">
 
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/text_send"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/send"
+            android:background="@android:color/transparent"
+            android:hint="Nhập tin nhắn..." />
+
+        <ImageButton
+            android:id="@+id/send"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_inbox" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

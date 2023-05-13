@@ -61,7 +61,11 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Story story = mStory.get(position);
 
-        userInfo(holder, story.getUserId(), position);
+
+        if (story.getUserId() != null) {
+            userInfo(holder, story.getUserId(), position);
+        }
+
 
         if (holder.getAdapterPosition() != 0) {
             seenStory(holder, story.getUserId());

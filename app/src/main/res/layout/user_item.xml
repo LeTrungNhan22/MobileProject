@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp">
@@ -39,15 +40,67 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnFollow"
+
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:padding="5dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/button_background"
-        android:textColor="@color/colorPrimary"
-        android:visibility="gone" />
+        android:layout_marginEnd="10dp"
+
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnFollow"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/button_background"
+            android:padding="5dp"
+            android:textColor="@color/colorPrimary"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/btnMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_message"
+            android:visibility="gone" />
+
+
+    </LinearLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/onlineStatus"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_below="@id/username"
+        android:layout_marginStart="-15dp"
+        android:layout_marginTop="35dp"
+        android:layout_toEndOf="@+id/profile_image"
+        android:layout_toRightOf="@+id/profile_image"
+        android:src="@drawable/ic_online"
+        app:civ_border_overlay="true"
+        android:visibility="gone"
+        app:civ_circle_background_color="#07BA25"
+        app:civ_border_color="#07BA25"
+        app:civ_border_width="15dp" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/offlineStatus"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_below="@id/username"
+        android:layout_marginStart="-15dp"
+        android:layout_marginTop="35dp"
+        android:layout_toEndOf="@+id/profile_image"
+        android:layout_toRightOf="@+id/profile_image"
+        android:src="@drawable/ic_offline"
+        app:civ_border_overlay="true"
+        app:civ_circle_background_color="#9C9C9C"
+        app:civ_border_color="#8A8A8A"
+        app:civ_border_width="15dp" />
+
 
 </RelativeLayout>

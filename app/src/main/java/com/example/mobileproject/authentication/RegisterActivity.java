@@ -143,7 +143,8 @@ public class RegisterActivity extends AppCompatActivity {
                     hashMap.put("phone_number", phone_number);
                     hashMap.put("bio", "");
                     hashMap.put("imageURL", "https://firebasestorage.googleapis.com/v0/b/mobileproject-30a59.appspot.com/o/common%2FAvatar.png?alt=media&token=b2cc192a-ea6a-4f7d-8916-a10ab61352c3");
-                    hashMap.put("status", "active");
+                    hashMap.put("statusUser", "active");
+                    hashMap.put("statusNetwork", "offline");
                     reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
