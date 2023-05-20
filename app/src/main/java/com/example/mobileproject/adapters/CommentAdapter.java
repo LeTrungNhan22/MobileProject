@@ -150,8 +150,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
-                Glide.with(mContext).load(user.getImageURL()).into(imageView);
 
+                if (user.getImageURL().equals("default")) {
+                    imageView.setImageResource(R.mipmap.ic_launcher);
+                } else {
+                    if (mContext != null && imageView != null) {
+                        Glide.with(mContext).load(user.getImageURL()).into(imageView);
+                    }
+
+                }
                 username.setText(user.getUsername());
             }
 

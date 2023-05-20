@@ -1,5 +1,6 @@
 package com.example.mobileproject.adapters;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -81,9 +82,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
                 if (holder.getAdapterPosition() == 0) {
                     myStory(holder.add_story_text, holder.story_plus, true);
                 } else {
-
                     Intent intent = new Intent(mContext, StoryActivity.class);
-
                     intent.putExtra("userId", story.getUserId());
                     mContext.startActivity(intent);
 
@@ -135,8 +134,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
 
-
-                Glide.with(mContext).load(user.getImageURL()).into(viewHolder.story_photo);
+                Glide.with(mContext.getApplicationContext()).load(user.getImageURL()).into(viewHolder.story_photo);
 
                 if (pos != 0) {
                     Glide.with(mContext).load(user.getImageURL()).into(viewHolder.story_photo_seen);
@@ -153,8 +151,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
     }
 
     private void myStory(TextView textView, ImageView imageView, boolean click) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -248,17 +245,14 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
     }
 
     private void seenStory(ViewHolder viewHolder, String userId) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story")
-                .child(userId);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story").child(userId);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int i = 0;
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    if (!dataSnapshot.child("views")
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .exists() && System.currentTimeMillis() < dataSnapshot.getValue(com.example.mobileproject.models.Story.class).getTimeEnd()) {
+                    if (!dataSnapshot.child("views").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).exists() && System.currentTimeMillis() < dataSnapshot.getValue(com.example.mobileproject.models.Story.class).getTimeEnd()) {
                         i++;
                     }
                 }

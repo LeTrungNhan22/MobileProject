@@ -10,9 +10,11 @@ public class User {
     private String bio;
     private Date createdAt;
     private Date updatedAt;
+    private String statusUser;
+
     private String statusNetwork;
 
-    public User(String id, String username, String fullName, String imageURL, String bio, Date createdAt, Date updatedAt, String statusNetwork) {
+    public User(String id, String username, String fullName, String imageURL, String bio, Date createdAt, Date updatedAt, String statusNetwork, String statusUser) {
         this.id = id;
         this.username = username;
         this.fullName = fullName;
@@ -21,6 +23,15 @@ public class User {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.statusNetwork = statusNetwork;
+        this.statusUser = statusUser;
+    }
+
+    public String getStatusUser() {
+        return statusUser;
+    }
+
+    public void setStatusUser(String statusUser) {
+        this.statusUser = statusUser;
     }
 
     public String getStatusNetwork() {

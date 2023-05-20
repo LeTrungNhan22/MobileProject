@@ -1,7 +1,9 @@
 package com.example.mobileproject.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,9 +11,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -35,8 +39,6 @@ import java.util.Objects;
 
 
 public class HomeFragment extends Fragment {
-
-
     private PostAdapter postAdapter;
     private List<Post> postList;
 
@@ -48,12 +50,15 @@ public class HomeFragment extends Fragment {
     private List<Story> storyList;
 
 
+    RecyclerView recyclerView;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setReverseLayout(true);
@@ -76,21 +81,28 @@ public class HomeFragment extends Fragment {
         storyAdapter = new StoryAdapter(getContext(), storyList);
         recyclerViewStory.setAdapter(storyAdapter);
 
-
         progressBar = view.findViewById(R.id.progress_circular);
-        ImageView chat_box = view.findViewById(R.id.chat_box);
+        final ImageView chat_box = view.findViewById(R.id.chat_box);
 
         chat_box.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), ChatActivity.class));
+                try {
+                    Intent intent = new Intent(v.getContext(), ChatActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("publisherId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    intent.putExtra("userId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    v.getContext().startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         });
 
         checkFollowing();
-
-
         return view;
+
     }
 
     private void checkFollowing() {

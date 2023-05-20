@@ -70,8 +70,7 @@ public class MessageActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MessageActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-
+                finish();
             }
         });
 
@@ -140,13 +139,11 @@ public class MessageActivity extends AppCompatActivity {
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Chat chat = dataSnapshot.getValue(Chat.class);
-                    if (chat != null) {
-                        if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userId)) {
-                            HashMap<String, Object> hashMap = new HashMap<>();
-                            hashMap.put("isSeen", true);
-                            dataSnapshot.getRef().updateChildren(hashMap);
+                    if (chat != null && chat.getReceiver().equals(fuser.getUid()) && chat.getSender().equals(userId)) {
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("isSeen", true);
+                        dataSnapshot.getRef().updateChildren(hashMap);
 
-                        }
                     }
                 }
 
@@ -167,6 +164,28 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("message", message);
         hashMap.put("isSeen", false);
         reference.child("Chats").push().setValue(hashMap);
+
+        DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                .child(fuser.getUid())
+                .child(receiver);
+        chatRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    chatRef.child("id").setValue(receiver);
+
+                }
+                DatabaseReference chatRefReceiver = FirebaseDatabase.getInstance().getReference("ChatList")
+                        .child(receiver)
+                        .child(fuser.getUid());
+                chatRefReceiver.child("id").setValue(fuser.getUid());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
     }
 

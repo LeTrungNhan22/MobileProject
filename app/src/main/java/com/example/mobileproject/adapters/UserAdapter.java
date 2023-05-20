@@ -39,14 +39,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private FirebaseUser firebaseUser;
     private boolean isFragment;
 
-    private boolean isChat;
 
 
-    public UserAdapter(Context mContext, List<User> mUsers, boolean isFragment, boolean isChat) {
+    public UserAdapter(Context mContext, List<User> mUsers, boolean isFragment) {
         this.mContext = mContext;
         this.mUsers = mUsers;
         this.isFragment = isFragment;
-        this.isChat = isChat;
+
     }
 
     @NonNull
@@ -65,8 +64,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         viewHolder.btnFollow.setVisibility(View.VISIBLE);
         viewHolder.btnMessage.setVisibility(View.VISIBLE);
-
-
         viewHolder.username.setText(user.getUsername());
         viewHolder.fullName.setText(user.getFullName());
 
@@ -76,18 +73,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             Glide.with(mContext).load(user.getImageURL()).into(viewHolder.profileImage);
         }
 
-        if (isChat) {
-            if (user.getStatusNetwork().equals("online") || user.getStatusNetwork().equals("trực tuyến")) {
-                viewHolder.onlineStatus.setVisibility(View.VISIBLE);
-                viewHolder.offlineStatus.setVisibility(View.GONE);
-            } else {
-                viewHolder.onlineStatus.setVisibility(View.GONE);
-                viewHolder.offlineStatus.setVisibility(View.VISIBLE);
-            }
-        } else {
-            viewHolder.onlineStatus.setVisibility(View.GONE);
-            viewHolder.offlineStatus.setVisibility(View.GONE);
-        }
 
         isFollowing(user.getId(), viewHolder.btnFollow);
 
@@ -168,9 +153,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             fullName = itemView.findViewById(R.id.fullName);
             profileImage = itemView.findViewById(R.id.profile_image);
             btnFollow = itemView.findViewById(R.id.btnFollow);
-            btnMessage = itemView.findViewById(R.id.btnMessage);
             onlineStatus = itemView.findViewById(R.id.onlineStatus);
             offlineStatus = itemView.findViewById(R.id.offlineStatus);
+            btnMessage = itemView.findViewById(R.id.btnMessage);
 
         }
 

@@ -57,7 +57,7 @@ public class SearchFragment extends Fragment {
 
         mUsers = new ArrayList<>();
 
-        userAdapter = new UserAdapter(getContext(), mUsers, true, false);
+        userAdapter = new UserAdapter(getContext(), mUsers, true);
         recyclerView.setAdapter(userAdapter);
 
         readUsers();
@@ -130,7 +130,6 @@ public class SearchFragment extends Fragment {
         });
 
     }
-
 
 
 }
