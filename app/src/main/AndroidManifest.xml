@@ -33,13 +33,7 @@
         <activity
             android:name=".MessageActivity"
             android:exported="false" />
-        <activity
-            android:name=".ChatActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".ChatActivity" />
         <activity
             android:name=".StoryActivity"
             android:exported="false"
@@ -85,7 +79,6 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

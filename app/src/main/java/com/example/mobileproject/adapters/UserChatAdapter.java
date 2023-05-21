@@ -1,6 +1,7 @@
 package com.example.mobileproject.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -54,47 +56,86 @@ public class UserChatAdapter extends RecyclerView.Adapter<UserChatAdapter.ViewHo
 
         final User user = mUsers.get(position);
 
-        holder.username.setText(user.getUsername());
-        holder.fullName.setText(user.getFullName());
-
-        if (user.getImageURL().equals("default")) {
-            holder.profile_image.setImageResource(R.mipmap.ic_launcher);
-        } else {
+        if (user != null) {
+            holder.username.setText(user.getUsername());
+            holder.fullName.setText(user.getFullName());
             Glide.with(mContext).load(user.getImageURL()).into(holder.profile_image);
-        }
+            if (isChat) {
+                lastMessage(user.getId(), holder.last_msg);
+            } else {
+                holder.last_msg.setVisibility(View.GONE);
+            }
 
-        if (isChat) {
-            lastMessage(user.getId(), holder.last_msg);
-        } else {
-            holder.last_msg.setVisibility(View.GONE);
-        }
-
-        if (isChat && user.getStatusNetwork() != null) {
-            if (user.getStatusNetwork().equals("online") || user.getStatusNetwork().equals("trực tuyến")) {
-                holder.onlineStatus.setVisibility(View.VISIBLE);
-                holder.offlineStatus.setVisibility(View.GONE);
+            if (isChat && user.getStatusNetwork() != null) {
+                if (user.getStatusNetwork().equals("online") || user.getStatusNetwork().equals("trực tuyến")) {
+                    holder.onlineStatus.setVisibility(View.VISIBLE);
+                    holder.offlineStatus.setVisibility(View.GONE);
+                } else {
+                    holder.onlineStatus.setVisibility(View.GONE);
+                    holder.offlineStatus.setVisibility(View.VISIBLE);
+                }
             } else {
                 holder.onlineStatus.setVisibility(View.GONE);
-                holder.offlineStatus.setVisibility(View.VISIBLE);
+                holder.offlineStatus.setVisibility(View.GONE);
             }
-        } else {
-            holder.onlineStatus.setVisibility(View.GONE);
-            holder.offlineStatus.setVisibility(View.GONE);
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, MessageActivity.class);
+                    if (user.getId().equals(firebaseUser.getUid())) {
+                        intent.putExtra("userId", user.getId());
+                    } else {
+                        intent.putExtra("userId", user.getId());
+                    }
+                    mContext.startActivity(intent);
+                }
+            });
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setTitle("Thông báo");
+                    builder.setMessage("Bạn có chắc chắn muốn xóa cuộc trò chuyện này không?");
+                    builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            deleteChat(user.getId());
+                        }
+                    });
+                    builder.setNegativeButton("Không", null);
+                    builder.show();
+                    return true;
+                }
+            });
+
+
         }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+
+    }
+
+    private void deleteChat(String id) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mContext, MessageActivity.class);
-                if (user.getId().equals(firebaseUser.getUid())) {
-                    intent.putExtra("userId", user.getId());
-                } else {
-                    intent.putExtra("userId", user.getId());
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                    Chat chat = snapshot1.getValue(Chat.class);
+                    if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(id) ||
+                            chat.getReceiver().equals(id) && chat.getSender().equals(firebaseUser.getUid())) {
+                        snapshot1.getRef().removeValue();
+                    }
                 }
-                mContext.startActivity(intent);
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
-
     }
 
     @Override
@@ -145,6 +186,7 @@ public class UserChatAdapter extends RecyclerView.Adapter<UserChatAdapter.ViewHo
                 switch (theLastMessage) {
                     case "default":
                         last_msg.setText("No message");
+                        last_msg.setVisibility(View.GONE);
                         break;
                     default:
                         last_msg.setText(theLastMessage);

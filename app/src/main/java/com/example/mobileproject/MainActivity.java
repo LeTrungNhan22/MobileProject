@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
 
+
         Bundle intent = getIntent().getExtras();
 
         if (intent != null) {
@@ -41,43 +42,56 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
             editor.putString("profileId", publisher);
             editor.apply();
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
+
+            // Kiểm tra xem publisherId có phải là ID người dùng hiện tại hay không
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser != null && publisher.equals(currentUser.getUid())) {
+                // Nếu là ID người dùng hiện tại, hiển thị ProfileFragment
+                selectedFragment = new ProfileFragment();
+            } else {
+                // Nếu không phải, hiển thị HomeFragment
+                selectedFragment = new HomeFragment();
+            }
         } else {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+            // Không có intent, hiển thị HomeFragment
+            selectedFragment = new HomeFragment();
         }
 
+        // Tiếp tục với code hiển thị fragment
+        if (selectedFragment != null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+        }
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
-            item -> {
-                switch (item.getItemId()) {
-                    case R.id.navigation_home:
-                        selectedFragment = new HomeFragment();
-                        break;
-                    case R.id.navigation_search:
-                        selectedFragment = new SearchFragment();
-                        break;
-                    case R.id.navigation_add:
-                        selectedFragment = null;
-                        startActivity(new Intent(MainActivity.this, PostActivity.class));
-                        break;
-                    case R.id.navigation_heart:
-                        selectedFragment = new NotificationFragment();
-                        break;
-                    case R.id.navigation_profile:
-                        SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-                        editor.putString("profileId", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                        editor.apply();
-                        selectedFragment = new ProfileFragment();
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + item.getItemId());
-                }
-                if (selectedFragment != null)
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+    private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener = item -> {
+        switch (item.getItemId()) {
+            case R.id.navigation_home:
+                selectedFragment = new HomeFragment();
+                break;
+            case R.id.navigation_search:
+                selectedFragment = new SearchFragment();
+                break;
+            case R.id.navigation_add:
+                selectedFragment = null;
+                startActivity(new Intent(MainActivity.this, PostActivity.class));
+                break;
+            case R.id.navigation_heart:
+                selectedFragment = new NotificationFragment();
+                break;
+            case R.id.navigation_profile:
+                SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+                editor.putString("profileId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                editor.apply();
+                selectedFragment = new ProfileFragment();
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + item.getItemId());
+        }
+        if (selectedFragment != null)
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
 
-                return true;
-            };
+        return true;
+    };
 
 
 }

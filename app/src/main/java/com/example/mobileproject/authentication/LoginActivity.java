@@ -86,8 +86,7 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 auth.signInWithEmailAndPassword(txt_email, txt_password).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
-                                .child(auth.getCurrentUser().getUid());
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(auth.getCurrentUser().getUid());
 
                         reference.addValueEventListener(new ValueEventListener() {
                             @Override
@@ -107,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                         });
                     } else {
                         pd.dismiss();
-                        Toast.makeText(LoginActivity.this, "Đăng nhập thất bại", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Đăng nhập thất bại tài khoản hoặc mật khẩu không chính xác", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

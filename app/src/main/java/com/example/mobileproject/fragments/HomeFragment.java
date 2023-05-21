@@ -87,18 +87,12 @@ public class HomeFragment extends Fragment {
         chat_box.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    Intent intent = new Intent(v.getContext(), ChatActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra("publisherId", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    intent.putExtra("userId", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    v.getContext().startActivity(intent);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
+                Intent intent = new Intent(getContext(), ChatActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivityForResult(intent, 1); // Sử dụng startActivityForResult
             }
         });
+
 
         checkFollowing();
         return view;
