@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.bumptech.glide.Glide;
 import com.example.mobileproject.ChatActivity;
 import com.example.mobileproject.R;
 import com.example.mobileproject.adapters.PostAdapter;
@@ -88,8 +89,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), ChatActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(intent, 1); // Sử dụng startActivityForResult
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("userId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                startActivity(intent);
             }
         });
 

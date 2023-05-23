@@ -111,12 +111,7 @@ public class MessageActivity extends AppCompatActivity {
                 User user = snapshot.getValue(User.class);
                 if (user != null) {
                     username.setText(user.getUsername());
-
-                    if (user.getImageURL().equals("default")) {
-                        profile_image.setImageResource(R.mipmap.ic_launcher);
-                    } else {
-                        Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
-                    }
+                    Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
                 }
                 readMessages(fuser.getUid(), userId, user.getImageURL());
 

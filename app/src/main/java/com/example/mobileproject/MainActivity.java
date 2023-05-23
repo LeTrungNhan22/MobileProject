@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.bumptech.glide.Glide;
 import com.example.mobileproject.fragments.HomeFragment;
 import com.example.mobileproject.fragments.NotificationFragment;
 import com.example.mobileproject.fragments.ProfileFragment;
@@ -14,10 +16,7 @@ import com.example.mobileproject.fragments.SearchFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
@@ -92,6 +91,12 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     };
+
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("HomeFragment", "onDestroy: ");
+        Glide.get(this).clearMemory();
+    }
 
 
 }

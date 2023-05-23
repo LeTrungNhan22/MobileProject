@@ -35,8 +35,6 @@ public class ChatActivity extends AppCompatActivity {
     CircleImageView profile_image;
     TextView username;
     FirebaseUser firebaseUser;
-    DatabaseReference reference;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,21 +53,16 @@ public class ChatActivity extends AppCompatActivity {
         profile_image = findViewById(R.id.profile_image);
         username = findViewById(R.id.username);
 
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = getIntent().getStringExtra("userId");
 
-        if (firebaseUser != null) {
-            reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
-        }
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 if (user != null) {
                     username.setText(user.getUsername());
-
                     Glide.with(ChatActivity.this).load(user.getImageURL()).into(profile_image);
-
-
                 }
             }
 
