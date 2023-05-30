@@ -93,8 +93,11 @@ public class AddStoryActivity extends AppCompatActivity {
                         hashMap.put("userId", myid);
 
                         reference.child(storyId).setValue(hashMap);
+
                         pd.dismiss();
+                        startActivity(new Intent(AddStoryActivity.this, MainActivity.class));
                         finish();
+
                     } else {
                         Toast.makeText(AddStoryActivity.this, "Thất bại vui lòng thử lại ",
                                 Toast.LENGTH_SHORT).show();
@@ -121,7 +124,9 @@ public class AddStoryActivity extends AppCompatActivity {
                 resultCode == RESULT_OK) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             imageUri = result.getUri();
+
             publishStory();
+
 
         } else {
             Toast.makeText(this, "Thất bại", Toast.LENGTH_SHORT).show();

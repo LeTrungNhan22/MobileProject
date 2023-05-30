@@ -111,8 +111,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:background="#20000000"
-        android:layout_margin="10dp"
         android:padding="3dp"
         android:src="@drawable/story_delete" />
 

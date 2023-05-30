@@ -1,10 +1,12 @@
 package com.example.mobileproject;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -127,16 +129,27 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         story_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story")
-                        .child(userId).child(storyIds.get(counter));
-                reference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(StoryActivity.this, "Đã xóa tin của bạn!", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
-                });
+                AlertDialog alertDialog = new AlertDialog.Builder(StoryActivity.this).create();
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel",
+                        (dialog, which) -> dialog.dismiss());
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Delete",
+                        (dialog, which) -> {
+                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story")
+                                    .child(userId).child(storyIds.get(counter));
+                            Log.e("storiId: ", storyIds.get(counter));
+                            Log.e("iduser: ", userId);
+                            reference.removeValue().addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(StoryActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(StoryActivity.this, MainActivity.class));
+                                    finish();
+                                }
+                            });
+                            dialog.dismiss();
+                        });
+                alertDialog.show();
             }
+
         });
     }
 
@@ -201,10 +214,12 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
                         storyIds.add(story.getStoryId());
                     }
                 }
-                storiesProgressView.setStoriesCount(images.size());
-                storiesProgressView.setStoryDuration(5000L);
-                storiesProgressView.setStoriesListener(StoryActivity.this);
-                storiesProgressView.startStories(counter);
+                if (!images.isEmpty()) {
+                    storiesProgressView.setStoriesCount(images.size());
+                    storiesProgressView.setStoryDuration(5000L);
+                    storiesProgressView.setStoriesListener(StoryActivity.this);
+                    storiesProgressView.startStories(counter);
+                }
 
                 Glide.with(getApplicationContext()).load(images.get(counter)).into(image);
                 addView(storyIds.get(counter));
