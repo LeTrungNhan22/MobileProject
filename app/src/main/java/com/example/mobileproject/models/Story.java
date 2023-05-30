@@ -58,4 +58,15 @@ public class Story {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
+    @Override
+    public String toString() {
+        return "Story{" +
+                "imageURL='" + imageURL + '\'' +
+                ", timeStart=" + timeStart +
+                ", timeEnd=" + timeEnd +
+                ", storyId='" + storyId + '\'' +
+                ", userId='" + userId + '\'' +
+                '}';
+    }
 }

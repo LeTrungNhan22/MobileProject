@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -151,7 +152,8 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
     }
 
     private void myStory(TextView textView, ImageView imageView, boolean click) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story").
+                child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override

@@ -51,7 +51,7 @@ public class HomeFragment extends Fragment {
     private List<Story> storyList;
 
 
-    RecyclerView recyclerView;
+    RecyclerView recyclerView, recyclerViewStory;
 
 
     @Override
@@ -72,16 +72,19 @@ public class HomeFragment extends Fragment {
         postAdapter = new PostAdapter(getContext(), postList);
         recyclerView.setAdapter(postAdapter);
 
-        RecyclerView recyclerViewStory = view.findViewById(R.id.recycler_view_stories);
+//        story layout
+        recyclerViewStory = view.findViewById(R.id.recycler_view_stories);
         recyclerViewStory.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getContext(),
-                LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getContext());
+        linearLayoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
+        linearLayoutManager1.setSmoothScrollbarEnabled(true);
+        linearLayoutManager.setReverseLayout(false);
         recyclerViewStory.setLayoutManager(linearLayoutManager1);
 
         storyList = new ArrayList<>();
         storyAdapter = new StoryAdapter(getContext(), storyList);
         recyclerViewStory.setAdapter(storyAdapter);
-
+//        story layout
         progressBar = view.findViewById(R.id.progress_circular);
         final ImageView chat_box = view.findViewById(R.id.chat_box);
 
@@ -117,6 +120,7 @@ public class HomeFragment extends Fragment {
                 }
                 readPosts();
                 readStory();
+
 
             }
 
@@ -167,20 +171,23 @@ public class HomeFragment extends Fragment {
                 storyList.add(new Story("", 0, 0, "",
                         Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()));
                 for (String id : followingList) {
-                    int countStory = 0;
-                    Story story = null;
-                    for (DataSnapshot dataSnapshot : snapshot.child(id).getChildren()) {
-                        story = dataSnapshot.getValue(Story.class);
-                        assert story != null;
-                        if (timeCurrent > story.getTimeStart() && timeCurrent < story.getTimeEnd()) {
-                            countStory++;
+                    if (id != null) {
+                        int countStory = 0;
+                        Story story = null;
+                        for (DataSnapshot dataSnapshot : snapshot.child(id).getChildren()) {
+                            story = dataSnapshot.getValue(Story.class);
+                            assert story != null;
+                            if (timeCurrent > story.getTimeStart() && timeCurrent < story.getTimeEnd()) {
+                                countStory++;
+                            }
+                        }
+                        if (countStory > 0) {
+                            assert story != null;
+                            storyList.add(story);
                         }
                     }
-                    if (countStory > 0) {
-                        assert story != null;
-                        storyList.add(story);
-                    }
                 }
+
                 storyAdapter.notifyDataSetChanged();
             }
 
@@ -190,4 +197,5 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
 }
